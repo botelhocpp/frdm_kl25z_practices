@@ -1,0 +1,61 @@
+# Pedro Botelho
+
+# Project Variables
+
+CPU 			:= cortex-m0plus
+LINKER_SCRIPT 	:= bsp/linker_script.lds
+SPECS 			:= nosys.specs
+HOME			:= $(shell whoami)
+BOARD			:= FRDM-KL46Z
+UPLOAD_PATH		:= /media/${HOME}/${BOARD}/
+OUTPUT			:= build/firmware
+OUTPUT_ELF		:= ${OUTPUT}.elf
+OUTPUT_BIN		:= ${OUTPUT}.bin
+LIB_PATH 		:= ~/.platformio/packages/toolchain-gccarmnoneeabi/lib/gcc/arm-none-eabi/9.3.1/
+
+TC				:= arm-none-eabi
+CC				:= ${TC}-gcc
+AS				:= ${TC}-as
+OBJCPY			:= ${TC}-objcopy
+OBJDMP			:= ${TC}-objdump
+
+# Compile Flags
+
+AFLAGS  := -mcpu=${CPU} -mthumb
+CFLAGS  := -mcpu=${CPU} -mthumb --specs=${SPECS} "-T${LINKER_SCRIPT}" "-Ibsp" "-Iinc" -Wall 
+LDFLAGS := ${CFLAGS} "-Wl,-Map,build/firmware.map" "-L${LIB_PATH}" -lgcc
+
+# Makefile Begin
+
+.PHONY: build upload disassembly clean
+
+all: build upload
+
+# Commands
+
+build: ${OUTPUT_BIN}
+
+upload: ${OUTPUT_BIN}
+	cp $< ${UPLOAD_PATH}
+
+disassembly: build/firmware.s
+
+clean:
+	rm -rf build/*
+
+# Regular Targets
+
+${OUTPUT_ELF}: build/start.o build/main.o bsp/bsp.h bsp/linker_script.lds
+	${CC} build/start.o build/main.o -o $@ $(LDFLAGS)
+
+build/main.o: src/main.c bsp/bsp.h
+	${CC} $(CFLAGS) -c $< -o $@
+
+build/start.o: src/start.s bsp/bsp.h
+	${AS} $(AFLAGS) -c $< -o $@
+	
+${OUTPUT_BIN}: ${OUTPUT_ELF}
+	${OBJCPY} -S -O binary $< $@
+
+build/firmware.s: ${OUTPUT_ELF}
+	${OBJDMP} -D -S $< > $@
