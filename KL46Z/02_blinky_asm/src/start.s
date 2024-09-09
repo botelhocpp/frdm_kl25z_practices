@@ -61,7 +61,8 @@ _zero_bss:
 _copy_data:
     cmp r1, r3
     bge _call_main
-    str r2, [r1]
+    ldr r3, [r2]
+    str r3, [r1]
     adds r1, r1, #4
     adds r2, r2, #4
     b _copy_data
