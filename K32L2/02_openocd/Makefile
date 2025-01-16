@@ -15,13 +15,14 @@ OUTPUT_BIN		:= ${OUTPUT}.bin
 TC				:= arm-none-eabi
 CC				:= ${TC}-gcc
 AS				:= ${TC}-as
+GDB				:= ${TC}-gdb
 OBJCPY			:= ${TC}-objcopy
 OBJDMP			:= ${TC}-objdump
 
-# Compile Fla
+# Compile Flags
 
-AFLAGS  := -mcpu=${CPU} -mthumb
-CFLAGS  := -mcpu=${CPU} -mthumb --specs=${SPECS} -nostdlib "-T${LINKER_SCRIPT}" -Wall 
+AFLAGS  := -g -mcpu=${CPU} -mthumb
+CFLAGS  := -Os -g -mcpu=${CPU} -mthumb --specs=${SPECS} -nostdlib "-T${LINKER_SCRIPT}" -Wall 
 LDFLAGS := ${CFLAGS} "-Wl,-Map,build/firmware.map" -nostartfiles
 
 # Makefile Begin
@@ -35,7 +36,8 @@ all: build upload
 build: ${OUTPUT_BIN}
 
 upload: ${OUTPUT_BIN}
-	cp $< ${UPLOAD_PATH}
+	# cp $< ${UPLOAD_PATH} # Drag-and-drop
+	openocd -f interface/cmsis-dap.cfg -f target/k32.cfg -c "program $< verify reset exit"
 
 disassembly: build/firmware.s
 
@@ -64,5 +66,5 @@ dump: build/dump.txt
 build/dump.txt: ${OUTPUT_ELF}
 	${OBJDMP} -D $< > $@
 
-debug: ${OUTPUT_BIN}
-	
+debug: ${OUTPUT_ELF}
+	${GDB} $<

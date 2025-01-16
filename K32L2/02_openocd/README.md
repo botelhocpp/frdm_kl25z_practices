@@ -125,11 +125,24 @@ Basically:
 - flash write_image erase firmware.bin 0x00000000: Flashes the binary in the flash, starting in the address 0x00000000.
 - reset run: Resets and executes firmware.
 
+Another way to upload to the microcontroller (in a single line) is:
+
+```
+openocd -f interface/cmsis-dap.cfg -f target/k32.cfg -c "program build/firmware.elf verify reset exit"
+```
+
+It will program the firmware, verify it, reset the microcontroller (what we would have to do manually using just the drag-and-drop) and exit the OpenOCD.
+
 We can also integrate OpenOCD with GDB to debug the code:
 
 ```
 arm-none-eabi-gdb build/firmware.elf
-target remote localhost:3333
+```
+
+Make sure you compile with ```-g``` flag and debug the ELF file, because it has the debug symbols necessary. Then in GDB connect to OpenOCD server in port 3333: 
+
+```
+(gdb) target remote localhost:3333
 ```
 
 ### 

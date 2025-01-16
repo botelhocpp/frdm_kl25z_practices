@@ -33,8 +33,8 @@ int main() {
 
 	while(1) {
 		HWREG(GPIOD_ADDR + GPIO_PCOR) |= (1 << 5);
-		_delay_ms(1000);
+		_delay_ms(2000);
 		HWREG(GPIOD_ADDR + GPIO_PSOR) |= (1 << 5);
-		_delay_ms(1000);
+		_delay_ms(2000);
 	}
 }
