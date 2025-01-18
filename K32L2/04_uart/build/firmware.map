@@ -1,0 +1,127 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+interrupt        0x0000000000000000 0x00000000000000c0 xr
+cfmprotrom       0x0000000000000400 0x0000000000000010 xr
+flash            0x0000000000000410 0x000000000003fbf0 xr
+sram             0x000000001fffe000 0x0000000000008000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD build/start.o
+LOAD build/main.o
+                0x0000000020006000                _estack = (ORIGIN (sram) + LENGTH (sram))
+
+.vectors        0x0000000000000000       0xc0
+                0x0000000000000000                . = ALIGN (0x4)
+ *(.vectors)
+ .vectors       0x0000000000000000       0xc0 build/start.o
+                0x00000000000000c0                . = ALIGN (0x4)
+
+.cfmprotect     0x0000000000000400       0x10
+                0x0000000000000400                . = ALIGN (0x4)
+ *(.cfmconfig)
+ .cfmconfig     0x0000000000000400       0x10 build/start.o
+                0x0000000000000410                . = ALIGN (0x4)
+
+.text           0x0000000000000410      0x1c8
+ *(.text*)
+ .text          0x0000000000000410       0x5c build/start.o
+                0x0000000000000410                _start
+                0x0000000000000442                _delay_ms
+                0x000000000000044c                _dummy_isr
+ .text          0x000000000000046c       0x6c build/main.o
+                0x000000000000046c                _systick_handler
+                0x0000000000000498                _porta_handler
+                0x00000000000004b8                _portc_portd_handler
+ .text.startup  0x00000000000004d8      0x100 build/main.o
+                0x00000000000004d8                main
+
+.glue_7         0x00000000000005d8        0x0
+ .glue_7        0x00000000000005d8        0x0 linker stubs
+
+.glue_7t        0x00000000000005d8        0x0
+ .glue_7t       0x00000000000005d8        0x0 linker stubs
+
+.vfp11_veneer   0x00000000000005d8        0x0
+ .vfp11_veneer  0x00000000000005d8        0x0 linker stubs
+
+.v4_bx          0x00000000000005d8        0x0
+ .v4_bx         0x00000000000005d8        0x0 linker stubs
+
+.iplt           0x00000000000005d8        0x0
+ .iplt          0x00000000000005d8        0x0 build/start.o
+
+.rodata         0x00000000000005d8        0xe
+ *(.rodata*)
+ .rodata.str1.1
+                0x00000000000005d8        0xe build/main.o
+                0x00000000000005e6                _sdata_ram = LOADADDR (.data)
+
+.rel.dyn        0x00000000000005e8        0x0
+ .rel.iplt      0x00000000000005e8        0x0 build/start.o
+
+.data           0x000000001fffe000        0x0 load address 0x00000000000005e6
+                0x000000001fffe000                _sdata = .
+ *(.first_data)
+ *(.data SORT_BY_NAME(.data.*))
+ .data          0x000000001fffe000        0x0 build/start.o
+ .data          0x000000001fffe000        0x0 build/main.o
+                0x000000001fffe000                _edata = .
+
+.igot.plt       0x000000001fffe000        0x0 load address 0x00000000000005e6
+ .igot.plt      0x000000001fffe000        0x0 build/start.o
+
+.bss            0x000000001fffe000        0x0 load address 0x00000000000005e6
+                0x000000001fffe000                _sbss = .
+ *(.bss SORT_BY_NAME(.bss.*) COMMON)
+ .bss           0x000000001fffe000        0x0 build/start.o
+ .bss           0x000000001fffe000        0x0 build/main.o
+                0x000000001fffe000                _ebss = .
+                0x000000001fffe000                _end = .
+OUTPUT(build/firmware.elf elf32-littlearm)
+
+.ARM.attributes
+                0x0000000000000000       0x2e
+ .ARM.attributes
+                0x0000000000000000       0x22 build/start.o
+ .ARM.attributes
+                0x0000000000000022       0x2c build/main.o
+
+.comment        0x0000000000000000       0x75
+ .comment       0x0000000000000000       0x75 build/main.o
+                                         0x76 (size before relaxing)
+
+.debug_line     0x0000000000000000      0x317
+ .debug_line    0x0000000000000000       0x65 build/start.o
+ .debug_line    0x0000000000000065      0x2b2 build/main.o
+
+.debug_info     0x0000000000000000      0x6d8
+ .debug_info    0x0000000000000000       0x26 build/start.o
+ .debug_info    0x0000000000000026      0x6b2 build/main.o
+
+.debug_abbrev   0x0000000000000000      0x1d6
+ .debug_abbrev  0x0000000000000000       0x14 build/start.o
+ .debug_abbrev  0x0000000000000014      0x1c2 build/main.o
+
+.debug_aranges  0x0000000000000000       0x48
+ .debug_aranges
+                0x0000000000000000       0x20 build/start.o
+ .debug_aranges
+                0x0000000000000020       0x28 build/main.o
+
+.debug_str      0x0000000000000000      0x356
+ .debug_str     0x0000000000000000       0x59 build/start.o
+ .debug_str     0x0000000000000059      0x2fd build/main.o
+                                        0x385 (size before relaxing)
+
+.debug_loc      0x0000000000000000       0x4c
+ .debug_loc     0x0000000000000000       0x4c build/main.o
+
+.debug_ranges   0x0000000000000000       0x80
+ .debug_ranges  0x0000000000000000       0x80 build/main.o
+
+.debug_frame    0x0000000000000000       0x5c
+ .debug_frame   0x0000000000000000       0x5c build/main.o

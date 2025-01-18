@@ -42,11 +42,11 @@ OpenOCD uses configuration files to define the debugging interfaces and board pa
 We will create a configuration file for the interface, ```interface/cmsis-dap.cfg```:
 
 ```
-adapter driver cmsis-dap
+interface cmsis-dap
 transport select swd
 ```
 
-CMSIS-DAP is the interface (adapter driver) between the PC and the MCU, and SWD (Serial Wire Debug) is the debugging interface between the OpenSDA and the MCU. Actually, SWD is a serial debugging protocol used by ARM Cortex microcontrollers. It is simpler and uses fewer pins than the traditional JTAG protocol, making it ideal for embedded devices.
+CMSIS-DAP is the interface between the PC and the MCU, and SWD (Serial Wire Debug) is the debugging interface between the OpenSDA and the MCU. Actually, SWD is a serial debugging protocol used by ARM Cortex microcontrollers. It is simpler and uses fewer pins than the traditional JTAG protocol, making it ideal for embedded devices.
 
 We also need configuration files for the board, namely ```target/k32.cfg```:
 
@@ -145,19 +145,4 @@ Make sure you compile with ```-g``` flag and debug the ELF file, because it has 
 (gdb) target remote localhost:3333
 ```
 
-The program will start automatically in the MCU, so we have to tell it to halt at main:
-
-```
-(gdb) monitor reset halt
-(gdb) break main
-```
-
-Then, you can set breakpoints, step-in/over/out or continue normally.
-
-If the error "No source available" is shown, make sure to use ```load``` after the monitor command, tto load the symbols.
-
-You can pass all the necessary commands to the GDB directly in the command line:
-
-```
-arm-none-eabi-gdb -ex "target remote localhost:3333" -ex "monitor reset halt" -ex "break main" -ex "continue" -ex "load" build/firmware.elf
-```
+### 

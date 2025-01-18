@@ -22,12 +22,12 @@ OBJDMP			:= ${TC}-objdump
 # Compile Flags
 
 AFLAGS  := -g -mcpu=${CPU} -mthumb
-CFLAGS  := -Os -g -mcpu=${CPU} -mthumb --specs=${SPECS} -nostdlib "-T${LINKER_SCRIPT}" -Wall 
+CFLAGS  := -Os -Ibsp -g -mcpu=${CPU} -mthumb --specs=${SPECS} -nostdlib "-T${LINKER_SCRIPT}" -Wall 
 LDFLAGS := ${CFLAGS} "-Wl,-Map,build/firmware.map" -nostartfiles
 
 # Makefile Begin
 
-.PHONY: build upload disassembly dump clean debug
+.PHONY: build upload disassembly dump clean debug openocd telnet
 
 all: build upload
 
@@ -37,7 +37,7 @@ build: ${OUTPUT_BIN}
 
 upload: ${OUTPUT_BIN}
 	# cp $< ${UPLOAD_PATH} # Drag-and-drop
-	openocd -f interface/cmsis-dap.cfg -f target/k32.cfg -c "program $< verify reset exit"
+	openocd -f bsp/tcl/interface/cmsis-dap.cfg -f bsp/tcl/board/k32.cfg -c "program $< verify reset exit"
 
 disassembly: build/firmware.s
 
@@ -65,6 +65,9 @@ dump: build/dump.txt
 
 build/dump.txt: ${OUTPUT_ELF}
 	${OBJDMP} -D $< > $@
+
+openocd:
+	openocd -f bsp/tcl/interface/cmsis-dap.cfg -f bsp/tcl/board/k32.cfg
 
 debug: ${OUTPUT_ELF}
 	${GDB} -ex "target remote localhost:3333" -ex "monitor reset halt" -ex "break main" -ex "continue" -ex "load" $<

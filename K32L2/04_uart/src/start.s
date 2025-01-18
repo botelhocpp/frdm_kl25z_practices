@@ -7,6 +7,11 @@
     .align 2
     .long  _estack
     .long  _start
+    .skip 4*13
+    .long _systick_handler
+    .skip 4*30
+    .long _porta_handler
+    .long _portc_portd_handler
 
 # Vector table
 .section .cfmconfig, "a"
@@ -65,3 +70,18 @@ _delay_ms_loop:
     subs r1, r1, #1
     bne _delay_ms_loop
     mov pc, lr   
+
+.align	1
+.thumb_func
+.weak _dummy_isr
+_dummy_isr:
+    b .
+
+.macro def_dummy_isr    isr_name
+    .weak \isr_name
+    .set  \isr_name, _dummy_isr
+.endm
+
+def_dummy_isr _systick_handler
+def_dummy_isr _porta_handler
+def_dummy_isr _portc_portd_handler
