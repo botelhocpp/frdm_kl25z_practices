@@ -70,4 +70,4 @@ openocd:
 	openocd -f bsp/tcl/interface/cmsis-dap.cfg -f bsp/tcl/board/k32.cfg
 
 debug: ${OUTPUT_ELF}
-	${GDB} -ex "target remote localhost:3333" -ex "monitor reset halt" -ex "break main" -ex "continue" -ex "load" $<
+	${GDB} -ex "target remote localhost:3333" -ex "monitor reset halt" -ex "break main" -ex "load" -ex "continue" -ex "layout src" $<

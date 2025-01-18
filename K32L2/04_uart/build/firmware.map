@@ -26,44 +26,42 @@ LOAD build/main.o
  .cfmconfig     0x0000000000000400       0x10 build/start.o
                 0x0000000000000410                . = ALIGN (0x4)
 
-.text           0x0000000000000410      0x1c8
+.text           0x0000000000000410      0x2d4
  *(.text*)
  .text          0x0000000000000410       0x5c build/start.o
                 0x0000000000000410                _start
                 0x0000000000000442                _delay_ms
                 0x000000000000044c                _dummy_isr
- .text          0x000000000000046c       0x6c build/main.o
-                0x000000000000046c                _systick_handler
-                0x0000000000000498                _porta_handler
-                0x00000000000004b8                _portc_portd_handler
- .text.startup  0x00000000000004d8      0x100 build/main.o
-                0x00000000000004d8                main
+ .text          0x000000000000046c      0x278 build/main.o
+                0x0000000000000618                main
+                0x000000000000064c                _systick_handler
+                0x0000000000000684                _porta_handler
+                0x00000000000006b4                _portc_portd_handler
 
-.glue_7         0x00000000000005d8        0x0
- .glue_7        0x00000000000005d8        0x0 linker stubs
+.glue_7         0x00000000000006e4        0x0
+ .glue_7        0x00000000000006e4        0x0 linker stubs
 
-.glue_7t        0x00000000000005d8        0x0
- .glue_7t       0x00000000000005d8        0x0 linker stubs
+.glue_7t        0x00000000000006e4        0x0
+ .glue_7t       0x00000000000006e4        0x0 linker stubs
 
-.vfp11_veneer   0x00000000000005d8        0x0
- .vfp11_veneer  0x00000000000005d8        0x0 linker stubs
+.vfp11_veneer   0x00000000000006e4        0x0
+ .vfp11_veneer  0x00000000000006e4        0x0 linker stubs
 
-.v4_bx          0x00000000000005d8        0x0
- .v4_bx         0x00000000000005d8        0x0 linker stubs
+.v4_bx          0x00000000000006e4        0x0
+ .v4_bx         0x00000000000006e4        0x0 linker stubs
 
-.iplt           0x00000000000005d8        0x0
- .iplt          0x00000000000005d8        0x0 build/start.o
+.iplt           0x00000000000006e4        0x0
+ .iplt          0x00000000000006e4        0x0 build/start.o
 
-.rodata         0x00000000000005d8        0xe
+.rodata         0x00000000000006e4        0xe
  *(.rodata*)
- .rodata.str1.1
-                0x00000000000005d8        0xe build/main.o
-                0x00000000000005e6                _sdata_ram = LOADADDR (.data)
+ .rodata        0x00000000000006e4        0xe build/main.o
+                0x00000000000006f2                _sdata_ram = LOADADDR (.data)
 
-.rel.dyn        0x00000000000005e8        0x0
- .rel.iplt      0x00000000000005e8        0x0 build/start.o
+.rel.dyn        0x00000000000006f4        0x0
+ .rel.iplt      0x00000000000006f4        0x0 build/start.o
 
-.data           0x000000001fffe000        0x0 load address 0x00000000000005e6
+.data           0x000000001fffe000        0x0 load address 0x00000000000006f2
                 0x000000001fffe000                _sdata = .
  *(.first_data)
  *(.data SORT_BY_NAME(.data.*))
@@ -71,10 +69,10 @@ LOAD build/main.o
  .data          0x000000001fffe000        0x0 build/main.o
                 0x000000001fffe000                _edata = .
 
-.igot.plt       0x000000001fffe000        0x0 load address 0x00000000000005e6
+.igot.plt       0x000000001fffe000        0x0 load address 0x00000000000006f2
  .igot.plt      0x000000001fffe000        0x0 build/start.o
 
-.bss            0x000000001fffe000        0x0 load address 0x00000000000005e6
+.bss            0x000000001fffe000        0x0 load address 0x00000000000006f2
                 0x000000001fffe000                _sbss = .
  *(.bss SORT_BY_NAME(.bss.*) COMMON)
  .bss           0x000000001fffe000        0x0 build/start.o
@@ -94,34 +92,28 @@ OUTPUT(build/firmware.elf elf32-littlearm)
  .comment       0x0000000000000000       0x75 build/main.o
                                          0x76 (size before relaxing)
 
-.debug_line     0x0000000000000000      0x317
+.debug_line     0x0000000000000000      0x2a5
  .debug_line    0x0000000000000000       0x65 build/start.o
- .debug_line    0x0000000000000065      0x2b2 build/main.o
+ .debug_line    0x0000000000000065      0x240 build/main.o
 
-.debug_info     0x0000000000000000      0x6d8
+.debug_info     0x0000000000000000      0x679
  .debug_info    0x0000000000000000       0x26 build/start.o
- .debug_info    0x0000000000000026      0x6b2 build/main.o
+ .debug_info    0x0000000000000026      0x653 build/main.o
 
-.debug_abbrev   0x0000000000000000      0x1d6
+.debug_abbrev   0x0000000000000000      0x187
  .debug_abbrev  0x0000000000000000       0x14 build/start.o
- .debug_abbrev  0x0000000000000014      0x1c2 build/main.o
+ .debug_abbrev  0x0000000000000014      0x173 build/main.o
 
-.debug_aranges  0x0000000000000000       0x48
+.debug_aranges  0x0000000000000000       0x40
  .debug_aranges
                 0x0000000000000000       0x20 build/start.o
  .debug_aranges
-                0x0000000000000020       0x28 build/main.o
+                0x0000000000000020       0x20 build/main.o
 
-.debug_str      0x0000000000000000      0x356
+.debug_str      0x0000000000000000      0x357
  .debug_str     0x0000000000000000       0x59 build/start.o
- .debug_str     0x0000000000000059      0x2fd build/main.o
-                                        0x385 (size before relaxing)
+ .debug_str     0x0000000000000059      0x2fe build/main.o
+                                        0x386 (size before relaxing)
 
-.debug_loc      0x0000000000000000       0x4c
- .debug_loc     0x0000000000000000       0x4c build/main.o
-
-.debug_ranges   0x0000000000000000       0x80
- .debug_ranges  0x0000000000000000       0x80 build/main.o
-
-.debug_frame    0x0000000000000000       0x5c
- .debug_frame   0x0000000000000000       0x5c build/main.o
+.debug_frame    0x0000000000000000      0x130
+ .debug_frame   0x0000000000000000      0x130 build/main.o

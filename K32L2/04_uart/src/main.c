@@ -15,7 +15,7 @@
 #define UART_BAUDRATE	(115200)
 
 static void setup_gpio(void) {
-	SIM->SCGC5 |= (1U << 9) | (1U << 11) | (1U << 12) | (1U << 13);
+	SIM->SCGC5 |= (1U << 9) | (1U << 11) | (1U << 12) | (1U << 13) | (1 << 20);
     
 	PORTA->PCR[SW1] = (0b1010 << 16) | (0b001U << 8) | (0b11U << 0);
 	PORTC->PCR[SW3] = (0b1010 << 16) | (0b001U << 8) | (0b11U << 0);
@@ -33,21 +33,13 @@ static void setup_gpio(void) {
 static void setup_systick(void) {
 	/* Config SysTick for 48MHz/16 */
 	SYSTICK->CTRL = (0b11);
-	SYSTICK->LOAD = 3000000 - 1;
+	SYSTICK->LOAD = 8000000/16 - 1;
 	SYSTICK->VAL = 0;
 }
 
 static void setup_uart(void) {
-	/* Activate LPUART0 clock */
-	SIM->SCGC5 |= (1U << 9) | (1 << 20);
-
-	MCG->C1 |= (1 << 1) | (1 << 0);
-	MCG->C2 |= (1 << 0);
-
 	/* Choose MCGIRCLK to LPUART0 */
 	SIM->SOPT2 = (0b11 << 26);
-
-	MCG->MC = (1U << 7);
 
 	/* Setup RX and TX pins */
 	PORTA->PCR[UART_TX] = (0b010 << 8);
@@ -62,14 +54,9 @@ static void setup_uart(void) {
 }
 
 static void uart_write(char c) {
-	uint32_t stat = LPUART0->STAT;
-	(void) stat;
-
 	while(!(LPUART0->STAT & (1 << 23)));
 
 	LPUART0->DATA = c;
-
-	// while(!(LPUART0->STAT & (1 << 22)));
 }
 
 static char uart_read(void) {
@@ -81,19 +68,23 @@ static char uart_read(void) {
 static void uart_print(const char *str) {
 	while(*str != '\0') {
 		uart_write(*str++);
-
-		for(int i = 0; i < 1000; i++);
 	}
+	while(!(LPUART0->STAT & (1 << 22)));
 }
 
 int main(void) {
-	setup_uart();
-
-	uart_print("Hello World\n\r");
+	/* Enable HIRC, LIRC and Set core clock to 8MHz */
+	MCG->C1 = (0b01 << 6) | (1 << 1) | (1 << 0);
+	MCG->C2 = (1 << 0);
+	MCG->MC = (1U << 7);
 
 	setup_gpio();
 
+	setup_uart();
+
 	setup_systick();
+
+	uart_print("Hello World\n\r");
 
 	while(1);
 }

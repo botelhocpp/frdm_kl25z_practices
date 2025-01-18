@@ -99,28 +99,28 @@ typedef struct {
 
 /* Chip Peripherals Access Layer */
 
-#define NVIC 		((nvic_t *) 	(0xE000E100u))
-#define SYSTICK 	((systick_t *) 	(0xE000E010u))
+#define NVIC 		((volatile nvic_t *) 		(0xE000E100u))
+#define SYSTICK 	((volatile systick_t *) 	(0xE000E010u))
 
 /* Core Peripherals Access Layer */
 
-#define SIM 		((sim_t *) 		(0x40047000u))
+#define SIM 		((volatile sim_t *) 		(0x40047000u))
 
-#define MCG			((mcg_t *) 		(0x40064000u))
+#define MCG			((volatile mcg_t *) 		(0x40064000u))
 
-#define LPUART0		((lpuart_t *) 	(0x40054000u))
-#define LPUART1		((lpuart_t *) 	(0x40055000u))
+#define LPUART0		((volatile lpuart_t *) 		(0x40054000u))
+#define LPUART1		((volatile lpuart_t *) 		(0x40055000u))
 
-#define PORTA 		((port_t *) 	(0x40049000u))
-#define PORTB 		((port_t *) 	(0x4004A000u))
-#define PORTC 		((port_t *) 	(0x4004B000u))
-#define PORTD 		((port_t *) 	(0x4004C000u))
-#define PORTE 		((port_t *) 	(0x4004D000u))
+#define PORTA 		((volatile port_t *) 		(0x40049000u))
+#define PORTB 		((volatile port_t *) 		(0x4004A000u))
+#define PORTC 		((volatile port_t *) 		(0x4004B000u))
+#define PORTD 		((volatile port_t *) 		(0x4004C000u))
+#define PORTE 		((volatile port_t *) 		(0x4004D000u))
 
-#define GPIOA 		((gpio_t *) 	(0x400FF000u))
-#define GPIOB 		((gpio_t *) 	(0x400FF040u))
-#define GPIOC 		((gpio_t *) 	(0x400FF080u))
-#define GPIOD 		((gpio_t *) 	(0x400FF0C0u))
-#define GPIOE 		((gpio_t *) 	(0x400FF100u))
+#define GPIOA 		((volatile gpio_t *) 		(0x400FF000u))
+#define GPIOB 		((volatile gpio_t *) 		(0x400FF040u))
+#define GPIOC 		((volatile gpio_t *) 		(0x400FF080u))
+#define GPIOD 		((volatile gpio_t *) 		(0x400FF0C0u))
+#define GPIOE 		((volatile gpio_t *) 		(0x400FF100u))
 
 #endif
